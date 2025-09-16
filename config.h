@@ -27,26 +27,17 @@
 #define CFG_VALUE_COLOR "\x1b[0m"    // default for values
 
 // Example ASCII logo (Arch Linux)
-// You can replace with your own. Keep it NULL-terminated.
 static const char *CFG_LOGO[] = {
 "",
-"                   ,____",
-"                   |---.|",
-"           ___     |    `",
-"          / .-\  ./=)",
-"         |  | |_/\/|",
-"         ;  |-;| /_|",
-"        / \_| |/ \ |",
-"       /      \/\( |",
-"       |   /  |` ) |",
-"       /   \ _/    |",
-"      /--._/  \    |",
-"      `/|)    |    /",
-"        /     |   |",
-"      .'      |   |",
-"jgs  /         \  |",
-"    (_.-.__.__./  /",	
-"",
+"   █████████   ",
+"  ███░░░░░███  ",
+" ░███    ░███  ",
+" ░███████████  ",
+" ░███░░░░░███  ",
+" ░███    ░███  ",
+" █████   █████ ",
+"░░░░░   ░░░░░  ",
+"",             
 NULL
 };
 //Thanks to asciiart.eu 
