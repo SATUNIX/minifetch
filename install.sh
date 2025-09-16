@@ -1,23 +1,19 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
+# install.sh — build (and optionally install) minifetch
 set -euo pipefail
 
-# Build and install minifetch
-# Usage:
-#   ./install.sh              # build to ./minifetch
-#   sudo ./install.sh install # build + install to /usr/local/bin/minifetch
+# Always refresh the embedded frames before compile
+./embed_logo.sh
 
-cc=${CC:-gcc}
-cflags="-O2 -pipe -s -Wall -Wextra"
-out="minifetch"
+CFLAGS="-O2 -pipe -s -Wall -Wextra -Wpedantic -Wno-unused-parameter -std=c99"
+cc ${CFLAGS} -o minifetch minifetch.c
 
-echo "[*] Building $out"
-$cc $cflags -o "$out" minifetch.c
-
-if [[ "${1:-}" == "install" ]]; then
-  echo "[*] Installing to /usr/local/bin/minifetch"
-  install -m 0755 "$out" /usr/local/bin/minifetch
-  echo "[+] Done. Try: minifetch"
+if [ "${1-}" = "install" ]; then
+  dst="/usr/local/bin/minifetch"
+  echo "Installing to ${dst} (requires sudo if not root)..."
+  install -m 0755 minifetch "${dst}"
+  echo "Installed ${dst}"
 else
-  echo "[+] Built ./minifetch"
+  echo "Built ./minifetch"
 fi
 
