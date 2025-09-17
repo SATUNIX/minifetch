@@ -1,0 +1,26 @@
+# POSIX Refactor TODO
+
+## Session Focus (do these first)
+- [x] Strip animation, frame parsing, and all `popen` usage from `minifetch.c`; leave only core collectors we plan to keep.
+- [x] Downgrade the C code to strict C89: move declarations to block tops, replace `//` comments, remove `stdbool.h` in favor of a compat typedef.
+- [x] Check that the current build succeeds with `cc -std=c89 -Wall -Wextra -Werror -pedantic -D_POSIX_C_SOURCE=200809L`.
+
+## Repo Restructure
+- [x] Split sources under `src/` (`main.c`, `core.c`, `linux_extras.c`, `term.c`, `cli.c`, `compat.c`) and expose public headers under `include/`.
+- [x] Delete legacy assets (`frames/`, `logo_embedded.inc`, embed scripts) after confirming no references remain.
+- [x] Introduce a simple Makefile (or shell script) that builds the core target plus an optional Linux extension variant with `-D_MINIFETCH_LINUX_EXT=1`.
+
+## Feature Parity & Behaviour
+- [x] Reimplement core collectors (uname, statvfs, sysconf, $SHELL) with bounded helpers; enforce color output only when stdout is a TTY.
+- [x] Add Linux-only collectors guarded behind `#ifdef __linux__` (os-release, `/proc/meminfo`, `/proc/uptime`) returning graceful failure codes.
+- [x] Replace option parsing with POSIX `getopt`: `-a` (all fields), `-c` (no color), `-q` (quiet), `-h` (help).
+
+## Quality Bar
+- [x] Provide `tests/smoke.sh` that exercises TTY vs piped output and validates Linux extras when enabled.
+- [ ] Run builds on at least one glibc and one BSD/musl environment; record results in the PR.
+- [x] Update docs (`README.md`, new `PORTABILITY.md`, `CONTRIBUTING.md`) once code changes stabilize.
+
+## Definition of Done
+- [ ] Core build is warning-free under C89 across Linux/BSD/macOS.
+- [ ] Linux extras compile and run only on Linux; non-Linux still succeeds with core feature set.
+- [x] No stray references to animation, JSON, GPU/resolution, or external pipelines remain.

@@ -1,0 +1,158 @@
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "config.h"
+#include "cli.h"
+#include "core.h"
+#include "linux_extras.h"
+#include "compat.h"
+#include "logo.h"
+#include "term.h"
+
+#define MF_ARRAY_LEN(arr) (sizeof(arr) / sizeof((arr)[0]))
+
+struct mf_field {
+    const char *label;
+    int (*collector)(char *out, size_t outsz);
+    int enabled_default;
+};
+
+static const struct mf_field g_fields[] = {
+    { "OS:",     mf_collect_os,     CFG_SHOW_OS },
+    { "Kernel:", mf_collect_kernel, CFG_SHOW_KERNEL },
+    { "Host:",   mf_collect_host,   CFG_SHOW_HOST },
+    { "CPU:",    mf_collect_cpu,    CFG_SHOW_CPU },
+    { "Shell:",  mf_collect_shell,  CFG_SHOW_SHELL },
+    { "Disk:",   mf_collect_disk,   CFG_SHOW_DISK },
+    { "Memory:", mf_collect_mem,    CFG_SHOW_MEM },
+    { "Uptime:", mf_collect_uptime, CFG_SHOW_UPTIME }
+};
+
+struct mf_render_line {
+    const char *label;
+    char value[256];
+};
+
+int main(int argc, char **argv)
+{
+    struct mf_options opts;
+    struct mf_render_line lines[MF_ARRAY_LEN(g_fields)];
+    size_t line_count;
+    int parse_result;
+    int want_colour;
+    const char *label_colour;
+    const char *value_colour;
+    const char *reset_colour;
+    size_t i;
+
+    parse_result = mf_cli_parse(argc, argv, &opts);
+    if (parse_result != 0) {
+        mf_cli_print_usage(argv[0]);
+        return 1;
+    }
+
+    if (opts.help != 0) {
+        mf_cli_print_usage(argv[0]);
+        return 0;
+    }
+
+    want_colour = mf_is_tty();
+    if (opts.no_colour) {
+        want_colour = 0;
+    }
+
+    label_colour = want_colour ? CFG_LABEL_COLOR : "";
+    value_colour = want_colour ? CFG_VALUE_COLOR : "";
+    reset_colour = want_colour ? CFG_RESET_COLOR : "";
+
+    line_count = 0;
+    for (i = 0; i < MF_ARRAY_LEN(g_fields); ++i) {
+        int enabled;
+        int rc;
+
+        enabled = g_fields[i].enabled_default;
+        if (!enabled && !opts.show_all) {
+            continue;
+        }
+
+        rc = g_fields[i].collector(lines[line_count].value, sizeof(lines[line_count].value));
+        if (rc != 0) {
+            continue;
+        }
+
+        lines[line_count].label = g_fields[i].label;
+        line_count++;
+    }
+
+    if (line_count == 0 && g_logo_line_count == 0U) {
+        return 0;
+    }
+
+    {
+        size_t rows;
+        size_t column_gap;
+
+        column_gap = 2U;
+        rows = line_count;
+        if (g_logo_line_count > rows) {
+            rows = g_logo_line_count;
+        }
+
+        for (i = 0; i < rows; ++i) {
+            const char *logo_line;
+            size_t logo_len;
+            size_t pad_spaces;
+            size_t n;
+
+            if (i < g_logo_line_count) {
+                logo_line = g_logo_lines[i];
+                fputs(logo_line, stdout);
+                logo_len = mf_utf8_display_width(logo_line);
+                if (g_logo_width > logo_len) {
+                    pad_spaces = g_logo_width - logo_len;
+                } else {
+                    pad_spaces = 0U;
+                }
+            } else {
+                logo_line = "";
+                logo_len = 0U;
+                pad_spaces = g_logo_width;
+            }
+
+            n = pad_spaces;
+            while (n > 0U) {
+                putchar(' ');
+                n--;
+            }
+
+            if (i < line_count) {
+                size_t gap;
+                gap = column_gap;
+                while (gap > 0U) {
+                    putchar(' ');
+                    gap--;
+                }
+
+                if (opts.quiet) {
+                    printf("%s\n", lines[i].value);
+                } else {
+                    printf("%s%-*s%s %s%s%s\n",
+                           label_colour,
+                           CFG_LABEL_WIDTH,
+                           lines[i].label,
+                           reset_colour,
+                           value_colour,
+                           lines[i].value,
+                           reset_colour);
+                }
+            } else {
+                putchar('\n');
+            }
+        }
+    }
+
+    return 0;
+}
