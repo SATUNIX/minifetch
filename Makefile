@@ -34,7 +34,7 @@ minifetch-linux: $(LOGO_SRC)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -DMINIFETCH_LINUX_EXT=1 $(LDFLAGS) $(SRCS) $(LDLIBS) -o $@
 
 $(LOGO_SRC): $(LOGO_TXT) tools/embed_logo.sh | $(BUILD_DIR)
-	tools/embed_logo.sh $(LOGO_TXT) $(LOGO_SRC)
+	$(SHELL) tools/embed_logo.sh $(LOGO_TXT) $(LOGO_SRC)
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)

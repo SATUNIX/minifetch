@@ -6,13 +6,13 @@ if [ "$#" -ne 2 ]; then
     exit 1
 fi
 
-input=$1
-output=$2
-outdir=$(dirname "$output")
+input="$1"
+output="$2"
+outdir="$(dirname "$output")"
 
 mkdir -p "$outdir"
 
-tmp=$(mktemp)
+tmp="$(mktemp)"
 trap 'rm -f "$tmp"' EXIT
 
 python3 - "$input" "$tmp" <<'PY'
