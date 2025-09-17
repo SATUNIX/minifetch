@@ -7,7 +7,7 @@
 4. Keep pull requests focused; describe behavioural changes, manual tests, and any portability considerations in the PR body.
 
 ## Coding Style
-- Stick to ANSI C (C99). Declarations go at the top of each block; avoid mixed declarations and statements.
+- Stick to (C99). Declarations go at the top of each block; avoid mixed declarations and statements.
 - Use 4-space indentation, no tabs. Braces stay on the same line as statements.
 - Prefer `static` for internal functions; use `snake_case` for functions and variables, `UPPER_CASE` for macros.
 - Copy strings with bounded helpers (`mf_strlcpy`) and sanitise inputs before printing. Avoid `strcpy`/`strcat`.
