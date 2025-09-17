@@ -53,7 +53,7 @@ add_custom_target(smoke
         "PATH=$ENV{PATH}"
         "MINIFETCH_BIN=$<TARGET_FILE:minifetch>"
         "MINIFETCH_LINUX_BIN=$<TARGET_FILE:minifetch-linux>"
-        ${CMAKE_CURRENT_SOURCE_DIR}/tests/smoke.sh
+        sh ${CMAKE_CURRENT_SOURCE_DIR}/tests/smoke.sh
     DEPENDS minifetch minifetch-linux
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Running smoke tests"
@@ -65,5 +65,5 @@ add_test(NAME smoke
         "PATH=$ENV{PATH}"
         "MINIFETCH_BIN=$<TARGET_FILE:minifetch>"
         "MINIFETCH_LINUX_BIN=$<TARGET_FILE:minifetch-linux>"
-        ${CMAKE_CURRENT_SOURCE_DIR}/tests/smoke.sh
+        sh ${CMAKE_CURRENT_SOURCE_DIR}/tests/smoke.sh
 )
