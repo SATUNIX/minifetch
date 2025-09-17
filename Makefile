@@ -5,7 +5,7 @@ LDFLAGS ?=
 LDLIBS ?=
 
 CPPFLAGS += -Iinclude
-CFLAGS += -std=c89 -Wall -Wextra -Werror -pedantic -D_POSIX_C_SOURCE=200809L
+CFLAGS += -std=c99 -Wall -Wextra -pedantic -D_POSIX_C_SOURCE=200809L
 LDLIBS += -lm
 
 BUILD_DIR ?= build
