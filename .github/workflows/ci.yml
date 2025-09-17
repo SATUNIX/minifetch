@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "master"]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install lint dependencies
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+
+      - name: Shell lint (POSIX sh)
+        run: |
+          shellcheck tools/embed_logo.sh tests/smoke.sh
+
+  build-make:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        cc: [gcc, clang]
+    env:
+      CC: ${{ matrix.cc }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build core target
+        run: make
+
+      - name: Build linux extension target
+        run: make minifetch-linux
+
+      - name: Run smoke tests
+        run: ./tests/smoke.sh
+
+  build-cmake:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure (CMake)
+        run: cmake -S . -B build -DCMAKE_C_COMPILER=${{ matrix.cc }}
+
+      - name: Build (CMake)
+        run: cmake --build build
+
+      - name: Run CTest suite
+        run: ctest --test-dir build --output-on-failure
