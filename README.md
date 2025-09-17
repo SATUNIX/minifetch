@@ -86,6 +86,21 @@ Run the bundled smoke test after each build:
 ```
 It verifies logo presence, colour suppression on pipes, and that Linux extras appear when available. CMake’s `ctest` target wraps the same script.
 
+## Technology Stack 
+
+<p align="center">
+  <!-- C -->
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg" alt="C" width="100" height="100"/>
+  <!-- CMake -->
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cmake/cmake-original.svg" alt="CMake" width="100" height="100"/>
+  <!-- Bash -->
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bash/bash-original.svg" alt="Bash" width="100" height="100"/>
+  <!-- Linux -->
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg" alt="Linux" width="100" height="100"/>
+
+</p>
+
+
 ## Further Reading
 - `PORTABILITY.md` documents supported platforms, fallbacks, and known gaps.
 - `CONTRIBUTING.md` outlines coding style (C89, 4-space indent), testing expectations, and how to add new collectors.
