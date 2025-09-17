@@ -24,3 +24,11 @@
 - [ ] Core build is warning-free under C89 across Linux/BSD/macOS.
 - [ ] Linux extras compile and run only on Linux; non-Linux still succeeds with core feature set.
 - [x] No stray references to animation, JSON, GPU/resolution, or external pipelines remain.
+
+- [x] Restore a monotonic timebase inside `mf_run_hidden_mode`: keep `start_time` (or accumulate a running phase) and feed `z = (now - start_time) * MF_HIDDEN_SPEED`. The current `elapsed` computation uses the frame delta so the noise field barely changes, which breaks the background animation pacing.
+- [x] Rework `mf_hidden_overlay_buffer` to operate on display columns rather than raw byte counts:
+    - Build logo width from `mf_utf8_display_width` instead of `strlen`,
+    - When copying the logo and formatted info lines into the overlay buffer, advance the terminal column using glyph width while writing the corresponding byte sequence, so multi-byte glyphs (logo blocks, ANSI escapes) do not blow past the reserved border.
+- [x] When computing the bordered box dimensions, base `inner_width` on the actual display width of logo/info (not `strlen`). This keeps the 1-char empty margin consistent even with coloured output or wide glyphs.
+- [x] Ensure the diff renderer warms the screen once after resizing: after clearing, copy `curr` into `prev` so the first present emits the full frame (avoids leftover gradient stripes when the buffers resize).
+- [x] After adjusting the scroll region (`CSI set top/bottom`), immediately move the cursor back to the home position before drawing; repeat this whenever the terminal is resized so the HUD line stays pinned.

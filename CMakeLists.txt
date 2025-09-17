@@ -20,6 +20,7 @@ set(SRC_BASE
     src/linux_extras.c
     src/compat.c
     src/term.c
+    src/hidden.c
 )
 
 set(LOGO_TXT ${CMAKE_CURRENT_SOURCE_DIR}/frames/logo.txt)
@@ -39,11 +40,13 @@ set(COMMON_SOURCES ${SRC_BASE} ${LOGO_GEN})
 add_executable(minifetch ${COMMON_SOURCES})
 target_include_directories(minifetch PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_options(minifetch PRIVATE ${WARN_FLAGS})
+target_link_libraries(minifetch PRIVATE m)
 
 add_executable(minifetch-linux ${COMMON_SOURCES})
 target_include_directories(minifetch-linux PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_options(minifetch-linux PRIVATE ${WARN_FLAGS})
 target_compile_definitions(minifetch-linux PRIVATE MINIFETCH_LINUX_EXT=1)
+target_link_libraries(minifetch-linux PRIVATE m)
 
 add_custom_target(smoke
     COMMAND ${CMAKE_COMMAND} -E env

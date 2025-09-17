@@ -6,6 +6,7 @@ struct mf_options {
     int no_colour;
     int quiet;
     int help;
+    int hidden;
 };
 
 int mf_cli_parse(int argc, char **argv, struct mf_options *opts);
