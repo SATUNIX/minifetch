@@ -19,10 +19,10 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-#define MF_HIDDEN_FPS 40.0
-#define MF_HIDDEN_SCALE 0.02
-#define MF_HIDDEN_SPEED 0.03
-#define MF_HIDDEN_GRADIENT " .:-=+*#%@"
+#define MF_HIDDEN_FPS 60.0
+#define MF_HIDDEN_SCALE 0.01
+#define MF_HIDDEN_SPEED 0.02
+#define MF_HIDDEN_GRADIENT " .:-=+#%@"
 #define MF_HIDDEN_COLUMN_GAP 3
 #define MF_HIDDEN_SIZE_REFRESH_SEC 0.5
 #define MF_HIDDEN_BUFFER_CAP (1u << 20)
