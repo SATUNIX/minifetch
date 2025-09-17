@@ -11,12 +11,12 @@
 [![GitHub Stars](https://img.shields.io/github/stars/SATUNIX/minifetch?style=flat&logo=github)](https://github.com/SATUNIX/minifetch/stargazers)
 [![GitHub Issues](https://img.shields.io/github/issues/SATUNIX/minifetch.svg)](https://github.com/SATUNIX/minifetch/issues)
 [![Last Commit](https://img.shields.io/github/last-commit/SATUNIX/minifetch.svg)](https://github.com/SATUNIX/minifetch/commits)
-[![Built with C89](https://img.shields.io/badge/built%20with-C89-informational)](#)
+[![Built with C99](https://img.shields.io/badge/built%20with-C99-informational)](#)
 [![Built with <3](https://img.shields.io/badge/built%20with-%E2%9D%A4-red)](#)
 
 
 
-`minifetch` is a third-generation refresh of a tiny fetch utility I made: a single-purpose system info reporter written in strict ANSI C (C89) with zero runtime dependencies beyond libc/POSIX. The program renders a static UTF-8 logo beside the data table, ships a lean collector set that works everywhere, and layers a Linux-only build for `/proc` niceties.
+`minifetch` is a third-generation refresh of a tiny fetch utility I made: a single-purpose system info reporter written in strict ANSI C (C99) with zero runtime dependencies beyond libc/POSIX. The program renders a static UTF-8 logo beside the data table, ships a lean collector set that works everywhere, and layers a Linux-only build for `/proc` niceties.
 
 ## Ethos
 - **Portable first**: core build sticks to POSIX.1-2008 APIs and avoids `popen`, JSON parsers, or external binaries.
@@ -26,7 +26,7 @@
 
 ## Quick Start
 ### Requirements
-- C compiler with C89 support (GCC/Clang work well)
+- C compiler with C99 support (GCC/Clang work well)
 - POSIX make **or** CMake ≥ 3.16
 - `python3` (used by the logo embedding script)
 
@@ -103,7 +103,7 @@ It verifies logo presence, colour suppression on pipes, and that Linux extras ap
 
 ## Further Reading
 - `PORTABILITY.md` documents supported platforms, fallbacks, and known gaps.
-- `CONTRIBUTING.md` outlines coding style (C89, 4-space indent), testing expectations, and how to add new collectors.
+- `CONTRIBUTING.md` outlines coding style (C99, 4-space indent), testing expectations, and how to add new collectors.
 
 minifetch v3 stays intentionally small, dependency-free, and friendly to both humans and automation. Enjoy the fetch.
 <!-- -- ..-. ----- ----- ...-- -... -.-- ... .- - ..- -. .. -..- -->
