@@ -1,14 +1,29 @@
+<!-- -- ..-. ----- ----- ...-- -... -.-- ... .- - ..- -. .. -..- -->
 # minifetch v3
 
-<img width="1592" height="684" alt="image" src="https://github.com/user-attachments/assets/03a6a52f-6631-4f18-b79b-224cfc395e3a" />
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/db30cd35-f6d4-43e2-a288-7619f35f65ae" alt="demo image">
+</p>
 
 
-`minifetch` is a third-generation refresh of the tiny fetch utility: a single-purpose system info reporter written in strict ANSI C (C89) with zero runtime dependencies beyond libc/POSIX. The program renders a static UTF-8 logo beside the data table, ships a lean collector set that works everywhere, and layers a Linux-only build for `/proc` niceties.
+
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active) 
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![GitHub Stars](https://img.shields.io/github/stars/SATUNIX/minifetch?style=flat&logo=github)](https://github.com/SATUNIX/minifetch/stargazers)
+[![GitHub Issues](https://img.shields.io/github/issues/SATUNIX/minifetch.svg)](https://github.com/SATUNIX/minifetch/issues)
+[![Last Commit](https://img.shields.io/github/last-commit/SATUNIX/minifetch.svg)](https://github.com/SATUNIX/minifetch/commits)
+[![Built with C89](https://img.shields.io/badge/built%20with-C89-informational)](#)
+[![Built with <3](https://img.shields.io/badge/built%20with-%E2%9D%A4-red)](#)
+
+
+
+`minifetch` is a third-generation refresh of a tiny fetch utility I made: a single-purpose system info reporter written in strict ANSI C (C89) with zero runtime dependencies beyond libc/POSIX. The program renders a static UTF-8 logo beside the data table, ships a lean collector set that works everywhere, and layers a Linux-only build for `/proc` niceties.
 
 ## Ethos
 - **Portable first**: core build sticks to POSIX.1-2008 APIs and avoids `popen`, JSON parsers, or external binaries.
 - **Predictable output**: UTF-8 logo is embedded at compile time; collectors return `-1` to drop unavailable lines gracefully.
-- **Small & auditable**: ~970 lines of C/H/sh code (see `wc -l` above) spread across focused modules under `src/` and `include/`.
+- **Small & auditable**: ~1.7KLOC spread across focused modules under `src/` and `include/`. Binaries of 003 are 36KB and 40KB with the linux extension. 
+
 
 ## Quick Start
 ### Requirements
@@ -70,3 +85,4 @@ It verifies logo presence, colour suppression on pipes, and that Linux extras ap
 - `CONTRIBUTING.md` outlines coding style (C89, 4-space indent), testing expectations, and how to add new collectors.
 
 minifetch v3 stays intentionally small, dependency-free, and friendly to both humans and automation. Enjoy the fetch.
+<!-- -- ..-. ----- ----- ...-- -... -.-- ... .- - ..- -. .. -..- -->
