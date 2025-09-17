@@ -6,7 +6,6 @@
 </p>
 
 
-
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active) 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/SATUNIX/minifetch?style=flat&logo=github)](https://github.com/SATUNIX/minifetch/stargazers)
@@ -56,6 +55,7 @@ CMake generates both executables and wires the smoke test through CTest. Variabl
 - `-h` show usage text.
 
 Example (Linux build with `-a`):
+
 ```
 ████  ████  OS:        Arch Linux
 ██  ██  ██  Kernel:    6.16.7-arch1-1
@@ -67,6 +67,12 @@ Example (Linux build with `-a`):
             Uptime:    1h 14m
 ```
 Piping the output (e.g., `./minifetch | cat`) suppresses colour automatically while preserving the value column.
+
+See an example of the hidden mode using the below linkg. (Called hidden mode due to ongoing development and tuning, use it with the long option --hidden).
+Would make a nice screensaver or something... 
+
+https://raw.githubusercontent.com/SATUNIX/minifetch/4f499d02227d486f8784aa7d56270abc2c375a24/hidden.svg
+
 
 ## Configuration & Logo Workflow
 - Compile-time toggles live in `include/config.h`. Adjust `CFG_SHOW_*`, colour ANSI escapes, or `CFG_LABEL_WIDTH` and rebuild (e.g., `make CFLAGS+="-DCFG_LABEL_WIDTH=12"`).
