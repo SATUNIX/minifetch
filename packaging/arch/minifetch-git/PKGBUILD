@@ -1,0 +1,50 @@
+LD (minifetch-git)
+pkgname=minifetch-git
+pkgver=0.r0.g0000000
+pkgrel=1
+pkgdesc="Tiny, portable system-info fetch in C (builds from latest git)"
+arch=('x86_64' 'aarch64')
+url="https://github.com/SATUNIX/minifetch"
+license=('MIT')       # adjust if needed
+depends=('glibc')
+makedepends=('git' 'make' 'gcc')
+optdepends=(
+  'pciutils: show PCI/GPU via lspci (if your tool calls it)'
+  'usbutils: show USB info via lsusb'
+  'procps-ng: uptime/meminfo helpers'
+)
+provides=('minifetch')
+conflicts=('minifetch')
+source=("git+$url.git")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/minifetch"
+  # Prefer annotated tags like v1.2.3; fall back to commit count+hash
+  if git describe --tags --long --match 'v*' >/dev/null 2>&1; then
+    git describe --tags --long --match 'v*' |
+      sed 's/^v//; s/-/./g'           # v1.2.3-4-gabc123 -> 1.2.3.4.gabc123
+  else
+    printf "0.r%s.%s" \
+      "$(git rev-list --count HEAD)" \
+      "$(git rev-parse --short HEAD)"
+  fi
+}
+
+build() {
+  cd "$srcdir/minifetch"
+  make
+}
+
+check() {
+  cd "$srcdir/minifetch"
+  make -k test || true
+}
+
+package() {
+  cd "$srcdir/minifetch"
+  make PREFIX=/usr DESTDIR="$pkgdir" install
+
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/minifetch/LICENSE" || true
+  install -Dm644 README.md "$pkgdir/usr/share/doc/minifetch/README.md" || true
+}
