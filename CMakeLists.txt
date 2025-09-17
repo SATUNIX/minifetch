@@ -29,7 +29,7 @@ set(LOGO_GEN ${CMAKE_CURRENT_BINARY_DIR}/logo_data.c)
 add_custom_command(
     OUTPUT ${LOGO_GEN}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}
-    COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/tools/embed_logo.sh ${LOGO_TXT} ${LOGO_GEN}
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tools/embed_logo.sh ${LOGO_TXT} ${LOGO_GEN}
     DEPENDS ${LOGO_TXT} ${CMAKE_CURRENT_SOURCE_DIR}/tools/embed_logo.sh
     COMMENT "Embedding logo into ${LOGO_GEN}"
     VERBATIM
