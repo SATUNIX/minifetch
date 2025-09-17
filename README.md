@@ -1,63 +1,69 @@
-# minifetch
+# minifetch v3
 
-`minifetch` is a tiny, pure-C system information fetcher with optional ASCII logo animation and layout switching. The binary builds cleanly on modern Linux distributions using only libc and POSIX APIs.
+`minifetch` is a third-generation refresh of the tiny fetch utility: a single-purpose system info reporter written in strict ANSI C (C89) with zero runtime dependencies beyond libc/POSIX. The program renders a static UTF-8 logo beside the data table, ships a lean collector set that works everywhere, and layers a Linux-only build for `/proc` niceties.
 
-## Repository Layout
-- `minifetch.c` — main program containing collectors, renderers, CLI parsing, and animation loop.
-- `config.h` — compile-time defaults for feature toggles, colors, layout, and animation behaviour; treated as the public configuration surface.
-- `embed_logo.sh` — regenerates `logo_embedded.inc` by embedding frames from `frames/` or `logo.txt` into C arrays.
-- `frames/` — sample animated logo frames (`logo0.txt`, `logo1.txt`, `logo2.txt`). Use this directory to add or replace animation frames.
-- `logo.txt` — fallback static logo for single-frame builds.
-- `install.sh` — convenience wrapper that runs the embed script and compiles `minifetch`; optionally installs to `/usr/local/bin`.
-- `logo_embedded.inc` — generated header providing the embedded frames. Committed so the repo runs out-of-the-box, but regenerated on every build.
+## Ethos
+- **Portable first**: core build sticks to POSIX.1-2008 APIs and avoids `popen`, JSON parsers, or external binaries.
+- **Predictable output**: UTF-8 logo is embedded at compile time; collectors return `-1` to drop unavailable lines gracefully.
+- **Small & auditable**: ~970 lines of C/H/sh code (see `wc -l` above) spread across focused modules under `src/` and `include/`.
 
-## Build & Installation
+## Quick Start
+### Requirements
+- C compiler with C89 support (GCC/Clang work well)
+- POSIX make **or** CMake ≥ 3.16
+- `python3` (used by the logo embedding script)
+
+### Make Build
 ```sh
-./install.sh        # refresh embedded frames and build ./minifetch
-./install.sh install
+make                # portable core binary ./minifetch
+make minifetch-linux # extended build with MINIFETCH_LINUX_EXT
+make clean          # remove binaries and build artefacts
 ```
-Passing `install` copies the binary to `/usr/local/bin/minifetch` (uses `install(1)`; run with the privileges your system requires). Manual builds mirror the script:
+
+### CMake Build
 ```sh
-./embed_logo.sh
-cc -O2 -pipe -s -Wall -Wextra -Wpedantic -Wno-unused-parameter -std=c99 -o minifetch minifetch.c
+cmake -S . -B build
+cmake --build build
+ctest --test-dir build
 ```
+CMake generates both executables and wires the smoke test through CTest. Variable `MINIFETCH_BIN`/`MINIFETCH_LINUX_BIN` is forwarded automatically.
 
-## Runtime Usage
+## Usage
 ```
-minifetch [--layout=side|top] [--animate=off|left|top]
-          [--mode=loop|pingpong|once] [--fps=N] [--duration=SECONDS]
-          [-h|--help]
+./minifetch [-a] [-c] [-q] [-h]
 ```
-- `--layout` switches between logo-left/info-right (`side`, default) and logo-above/info-below (`top`).
-- `--animate` controls whether the logo region animates and where the frames draw; incompatible requests are coerced to a valid area with a warning.
-- `--mode` selects an animation sequence pattern.
-- `--fps` and `--duration` clamp to safe ranges (1–60 FPS, max 24h). `--duration=0` runs indefinitely for loop/pingpong.
-- When stdout is not a TTY and `CFG_ANIM_PLAY_ON_TTY_ONLY` is true, animation is disabled automatically.
+- `-a` include every collector (core + Linux extras when compiled with `MINIFETCH_LINUX_EXT`).
+- `-c` force monochrome output even when stdout is a TTY.
+- `-q` quiet mode; prints values only, one per line.
+- `-h` show usage text.
 
-## Configuration Surface (`config.h`)
-Key macros provide the default experience and can be toggled per-build:
-- `CFG_SHOW_*` flags decide which collectors run (distro, host, kernel, uptime, packages, shell, resolution, WM, DE, CPU, GPU, memory, disk).
-- Colors: `CFG_LOGO_COLOR`, `CFG_LABEL_COLOR`, `CFG_VALUE_COLOR` (ANSI escape sequences).
-- Layout: `CFG_GAP_SPACES`, `CFG_LAYOUT` (`CFG_LAYOUT_SIDE` or `CFG_LAYOUT_TOP`).
-- Animation: enable/disable (`CFG_ANIM_ENABLED`), area (`CFG_ANIM_LEFT` / `CFG_ANIM_TOP`), mode (`CFG_ANIM_OFF`, `_LOOP`, `_PINGPONG`, `_ONCE`), `CFG_ANIM_FPS`, `CFG_ANIM_DURATION_SEC`, `CFG_ANIM_PLAY_ON_TTY_ONLY`, `CFG_USE_ALT_SCREEN`, `CFG_HIDE_CURSOR_DURING_ANIM`.
-Override macros at compile time (e.g. `cc ... -DCFG_ANIM_ENABLED=1`). Runtime flags can refine most animation choices.
+Example (Linux build with `-a`):
+```
+████  ████  OS:        Arch Linux
+██  ██  ██  Kernel:    6.16.7-arch1-1
+██      ██  Host:      archlinux
+██  ██  ██  CPU:       32
+████  ████  Shell:     bash
+            Disk:      10.8 GiB / 931 GiB (1%)
+            Memory:    4.3 GiB / 126 GiB
+            Uptime:    1h 14m
+```
+Piping the output (e.g., `./minifetch | cat`) suppresses colour automatically while preserving the value column.
 
-## Logo & Animation Workflow
-1. Drop static art in `logo.txt` **or** provide ordered frames under `frames/logo*.txt` (lexicographic order defines playback).
-2. Run `./embed_logo.sh` (automatically done by `install.sh`).
-3. Commit the regenerated `logo_embedded.inc` alongside any new assets so the repo remains runnable without extra steps.
+## Configuration & Logo Workflow
+- Compile-time toggles live in `include/config.h`. Adjust `CFG_SHOW_*`, colour ANSI escapes, or `CFG_LABEL_WIDTH` and rebuild (e.g., `make CFLAGS+="-DCFG_LABEL_WIDTH=12"`).
+- Static art is sourced from `frames/logo.txt`. Edit the UTF-8 logo, then rebuild; the Makefile/CMake scripts regenerate `build/logo_data.c` through `tools/embed_logo.sh`.
+- Embedding script escapes non-ASCII bytes and records display width so multi-byte glyphs keep the info column aligned.
 
-## Quirks & Notes
-- Collectors prefer `/proc`, `/sys`, and builtin syscalls; optional tools (`hyprctl`, `wlr-randr`, `xrandr`, `lspci`) are used when present and silently skipped otherwise.
-- Animation uses ANSI control sequences only when stdout is a TTY; Ctrl+C restores cursor visibility and exits cleanly.
-- Unequal frame sizes are padded to the widest frame width, preventing ghosting during animation.
+## Tests
+Run the bundled smoke test after each build:
+```sh
+./tests/smoke.sh
+```
+It verifies logo presence, colour suppression on pipes, and that Linux extras appear when available. CMake’s `ctest` target wraps the same script.
 
-## Developer TODO / Testing Guide
-Use this checklist before pushing changes:
-- [ ] `./embed_logo.sh` then `cc -O2 -pipe -s -Wall -Wextra -Wpedantic -Wno-unused-parameter -std=c99 -o minifetch minifetch.c` — verify a warning-free build.
-- [ ] Run `./minifetch` on a TTY with default config (`CFG_ANIM_ENABLED=0`) and confirm layout spacing and color resets.
-- [ ] Enable animation (`./minifetch --animate=left --mode=loop --fps=10`) and watch for clean cursor/alt-screen behaviour; interrupt with Ctrl+C to ensure state restoration.
-- [ ] Test top layout (`./minifetch --layout=top --animate=top --mode=pingpong`) to confirm static info placement and animation area adjustment warnings.
-- [ ] Pipe output (`./minifetch | head`) to verify animation suppression and graceful first-frame rendering.
-- [ ] Spot-check collectors: distro/host/kernel/uptime on the current system; ensure missing optional tools fall back to `n/a` without delays.
-- [ ] Regenerate frames after editing assets and confirm `logo_embedded.inc` changes are deterministic (repeat `./embed_logo.sh` twice and diff).
+## Further Reading
+- `PORTABILITY.md` documents supported platforms, fallbacks, and known gaps.
+- `CONTRIBUTING.md` outlines coding style (C89, 4-space indent), testing expectations, and how to add new collectors.
+
+minifetch v3 stays intentionally small, dependency-free, and friendly to both humans and automation. Enjoy the fetch.
