@@ -9,6 +9,8 @@
 int mf_cli_parse(int argc, char **argv, struct mf_options *opts)
 {
     int ch;
+    int i;
+    int write_index;
 
     if (opts == NULL) {
         return -1;
@@ -18,6 +20,18 @@ int mf_cli_parse(int argc, char **argv, struct mf_options *opts)
     opts->no_colour = 0;
     opts->quiet = 0;
     opts->help = 0;
+    opts->hidden = 0;
+
+    write_index = 1;
+    for (i = 1; i < argc; ++i) {
+        if (strcmp(argv[i], "--hidden") == 0) {
+            opts->hidden = 1;
+            continue;
+        }
+        argv[write_index++] = argv[i];
+    }
+    argv[write_index] = NULL;
+    argc = write_index;
 
     opterr = 0;
 

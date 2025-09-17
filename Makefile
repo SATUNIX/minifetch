@@ -2,9 +2,11 @@ CC ?= cc
 CPPFLAGS ?=
 CFLAGS ?=
 LDFLAGS ?=
+LDLIBS ?=
 
 CPPFLAGS += -Iinclude
 CFLAGS += -std=c89 -Wall -Wextra -Werror -pedantic -D_POSIX_C_SOURCE=200809L
+LDLIBS += -lm
 
 BUILD_DIR ?= build
 LOGO_TXT = frames/logo.txt
@@ -16,7 +18,8 @@ SRC_BASE = \
 	src/core.c \
 	src/linux_extras.c \
 	src/compat.c \
-	src/term.c
+	src/term.c \
+	src/hidden.c
 
 SRCS = $(SRC_BASE) $(LOGO_SRC)
 
@@ -25,10 +28,10 @@ SRCS = $(SRC_BASE) $(LOGO_SRC)
 all: minifetch
 
 minifetch: $(LOGO_SRC)
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $(SRCS) -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $(SRCS) $(LDLIBS) -o $@
 
 minifetch-linux: $(LOGO_SRC)
-	$(CC) $(CPPFLAGS) $(CFLAGS) -DMINIFETCH_LINUX_EXT=1 $(LDFLAGS) $(SRCS) -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) -DMINIFETCH_LINUX_EXT=1 $(LDFLAGS) $(SRCS) $(LDLIBS) -o $@
 
 $(LOGO_SRC): $(LOGO_TXT) tools/embed_logo.sh | $(BUILD_DIR)
 	tools/embed_logo.sh $(LOGO_TXT) $(LOGO_SRC)
