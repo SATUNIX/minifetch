@@ -530,7 +530,6 @@ static void mf_hidden_present_diff(const struct mf_hidden_cell *curr, struct mf_
 
     while (pos < total) {
         if (curr[pos].len != prev[pos].len || memcmp(curr[pos].bytes, prev[pos].bytes, curr[pos].len) != 0) {
-            size_t run = 1;
             size_t row = pos / (size_t)cols;
             size_t col = pos % (size_t)cols;
             size_t idx = pos + 1;
@@ -544,7 +543,6 @@ static void mf_hidden_present_diff(const struct mf_hidden_cell *curr, struct mf_
                     break;
                 }
                 ++idx;
-                ++run;
             }
 
             fprintf(stdout, "\x1b[%lu;%luH", (unsigned long)(row + 1), (unsigned long)(col + 1));

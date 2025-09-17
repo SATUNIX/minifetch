@@ -35,7 +35,7 @@ jobs:
         run: make minifetch-linux
 
       - name: Run smoke tests
-        run: ./tests/smoke.sh
+        run: sh tests/smoke.sh
 
   build-cmake:
     runs-on: ubuntu-latest

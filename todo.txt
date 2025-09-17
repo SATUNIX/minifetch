@@ -5,6 +5,14 @@
 - [x] Downgrade the C code to strict C89: move declarations to block tops, replace `//` comments, remove `stdbool.h` in favor of a compat typedef.
 - [x] Check that the current build succeeds with `cc -std=c89 -Wall -Wextra -Werror -pedantic -D_POSIX_C_SOURCE=200809L`.
 
+## CI recovery plan
+- [x] Restore executable permissions on helper scripts (`tools/embed_logo.sh`, `tests/smoke.sh`) so `make`/`./tests/smoke.sh` work on CI runners.
+- [x] Update `CMakeLists.txt` logo embed rule to invoke the shell script (not `python3`), then regen `build/logo_data.c` via `cmake --build`.
+- [x] Make `tests/smoke.sh` strictly POSIX (`ANSI_ESC` via `printf`, avoid Bash-only constructs) and re-run `shellcheck` locally.
+- [x] Call helper scripts via `sh` (`Makefile`, CMake, CI) so CI is resilient to missing execute bits.
+- [ ] Run the full CI matrix locally: `make`, `make minifetch-linux`, `tests/smoke.sh`, `cmake -S . -B build`, `cmake --build build`, `ctest --test-dir build --output-on-failure` under both gcc and clang.
+- [x] Ensure `tests/smoke.sh` passes when executed with `/bin/sh` (dash) after the fixes.
+
 ## Repo Restructure
 - [x] Split sources under `src/` (`main.c`, `core.c`, `linux_extras.c`, `term.c`, `cli.c`, `compat.c`) and expose public headers under `include/`.
 - [x] Delete legacy assets (`frames/`, `logo_embedded.inc`, embed scripts) after confirming no references remain.
